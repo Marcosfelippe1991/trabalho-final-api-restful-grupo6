@@ -1,9 +1,10 @@
 package br.com.residencia.ecommerce.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.residencia.ecommerce.dto.CategoriaDTO;
 import br.com.residencia.ecommerce.entity.Categoria;
 import br.com.residencia.ecommerce.service.CategoriaService;
 
@@ -25,42 +27,34 @@ public class CategoriaController {
 	CategoriaService categoriaService;
 	
 	@GetMapping
-	public ResponseEntity<List<Categoria>> getAllCategorias(){
-		return new ResponseEntity<>(categoriaService.getAllCategorias(), HttpStatus.OK);
+	public ResponseEntity<Page<Categoria>> getAllCategorias(@PageableDefault(
+			page = 0, 
+			size = 10, 
+			sort = "nome", 
+			direction = Sort.Direction.ASC)
+			Pageable pageable) {
+
+		return categoriaService.getAllCategorias(pageable);
 	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Categoria> getCategoriaById(@PathVariable Integer id) {
-		Categoria categoria = categoriaService.getCategoriaById(id);
-		if(null != categoria)
-			return new ResponseEntity<>(categoria,
-					HttpStatus.OK);
-		else
-			return new ResponseEntity<>(categoria,
-					HttpStatus.NOT_FOUND);
+		return categoriaService.getCategoriaById(id);
 	}
 	
 	@PostMapping
-	public ResponseEntity<Categoria> saveCategoria(@RequestBody Categoria categoria) {
-		return new ResponseEntity<>(categoriaService.saveCategoria(categoria),
-				HttpStatus.CREATED);
+	public ResponseEntity<Categoria> saveCategoria(@RequestBody CategoriaDTO categoriaDTO) {
+		return categoriaService.saveCategoria(categoriaDTO);
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Categoria> updateCategoria(@RequestBody Categoria categoria, 
+	public ResponseEntity<Categoria> updateCategoria(@RequestBody CategoriaDTO categoriaDTO,
 			@PathVariable Integer id){
-		return new ResponseEntity<>(categoriaService.updateCategoria(categoria, id),
-				HttpStatus.OK);
+		return categoriaService.updateCategoria(categoriaDTO, id);
 	}
-	
+		
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Categoria> deleteCategoria(@PathVariable Integer id) {
-		Categoria categoria = categoriaService.getCategoriaById(id);
-		if(null == categoria)
-			return new ResponseEntity<>(categoria,
-					HttpStatus.NOT_FOUND);
-		else
-			return new ResponseEntity<>(categoriaService.deleteCategoria(id),
-					HttpStatus.OK);
+	public ResponseEntity<Object> deleteCategoria(@PathVariable Integer id) {
+		return categoriaService.deleteCategoria(id);
 	}
 }

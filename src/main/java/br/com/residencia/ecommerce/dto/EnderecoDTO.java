@@ -1,52 +1,17 @@
-package br.com.residencia.ecommerce.entity;
+package br.com.residencia.ecommerce.dto;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import br.com.residencia.ecommerce.entity.Cliente;
 
-@Entity
-@Table(name = "enderecos")
-public class Endereco {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "idendereco")
-	private Integer idEndereco;
+public class EnderecoDTO {
 
-	@Column(name = "cep", nullable = false, length = 9)
 	private String cep;
-
-	@Column(name = "rua", nullable = false)
 	private String rua;
-
-	@Column(name = "bairro", nullable = false)
 	private String bairro;
-
-	@Column(name = "cidade", nullable = false)
 	private String cidade;
-	
-	@Column(name = "numero", nullable = false)
 	private String numero;
-
-	@Column(name = "complemento", nullable = false)
 	private String complemento;
-
-	@Column(name = "uf", nullable = false, length = 2)
 	private String uf;
-
-	@OneToOne(mappedBy = "endereco")
 	private Cliente cliente;
-
-	public Integer getIdEndereco() {
-		return idEndereco;
-	}
-
-	public void setIdEndereco(Integer idEndereco) {
-		this.idEndereco = idEndereco;
-	}
 
 	public String getCep() {
 		return cep;

@@ -1,9 +1,10 @@
 package br.com.residencia.ecommerce.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.residencia.ecommerce.dto.ProdutoDTO;
 import br.com.residencia.ecommerce.entity.Produto;
 import br.com.residencia.ecommerce.service.ProdutoService;
 
@@ -23,37 +25,36 @@ public class ProdutoController {
 
 	@Autowired
 	ProdutoService produtoService;
-
+	
 	@GetMapping
-	public ResponseEntity<List<Produto>> getAllProdutos() {
-		return new ResponseEntity<>(produtoService.getAllProdutos(), HttpStatus.OK);
-	}
+	public ResponseEntity<Page<Produto>> getAllProdutos(@PageableDefault(
+			page = 0, 
+			size = 10, 
+			sort = "nome", 
+			direction = Sort.Direction.ASC)
+			Pageable pageable) {
 
+		return produtoService.getAllProdutos(pageable);
+	}
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<Produto> getProdutoById(@PathVariable Integer id) {
-		Produto produto = produtoService.getProdutoById(id);
-		if (null != produto)
-			return new ResponseEntity<>(produto, HttpStatus.OK);
-		else
-			return new ResponseEntity<>(produto, HttpStatus.NOT_FOUND);
+		return produtoService.getProdutoById(id);
 	}
-
+	
 	@PostMapping
-	public ResponseEntity<Produto> saveProduto(@RequestBody Produto produto) {
-		return new ResponseEntity<>(produtoService.saveProduto(produto), HttpStatus.CREATED);
+	public ResponseEntity<Produto> saveProduto(@RequestBody ProdutoDTO produtoDTO) {
+		return produtoService.saveProduto(produtoDTO);
 	}
-
+	
 	@PutMapping("/{id}")
-	public ResponseEntity<Produto> updateProduto(@RequestBody Produto produto, @PathVariable Integer id) {
-		return new ResponseEntity<>(produtoService.updateProduto(produto, id), HttpStatus.OK);
+	public ResponseEntity<Produto> updateProduto(@RequestBody ProdutoDTO produtoDTO,
+			@PathVariable Integer id){
+		return produtoService.updateProduto(produtoDTO, id);
 	}
-
+		
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Produto> deleteProduto(@PathVariable Integer id) {
-		Produto produto = produtoService.getProdutoById(id);
-		if (null == produto)
-			return new ResponseEntity<>(produto, HttpStatus.NOT_FOUND);
-		else
-			return new ResponseEntity<>(produtoService.deleteProduto(id), HttpStatus.OK);
+	public ResponseEntity<Object> deleteProduto(@PathVariable Integer id) {
+		return produtoService.deleteProduto(id);
 	}
 }
